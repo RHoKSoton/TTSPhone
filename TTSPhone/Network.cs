@@ -18,8 +18,11 @@ namespace TTSPhone
     public class Network
     {
         Socket socket;
+        Socket connection;
+
         public Network()
         {
+            connection = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         }
 
         public void Connect(string IPAddress, int port)
@@ -44,6 +47,21 @@ namespace TTSPhone
             {
             }
         }
+
+        public void NetworkListener()
+        {
+            var ResponseListener = new SocketAsyncEventArgs();
+            ResponseListener.Completed += OnMessageReceivedFromServer;
+            var ResponseBuffer = new byte[1024];
+            ResponseListener.SetBuffer(ResponseBuffer, 0, 1024);
+            connection.ReceiveAsync(ResponseListener);
+        }
+
+        public void OnMessageReceivedFromServer(object sender, SocketAsyncEventArgs e)
+        {
+            var message = e.Buffer;
+        }
+           
 
         public void SocketAsyncEventArgs_Completed(object sender, SocketAsyncEventArgs e)
         {

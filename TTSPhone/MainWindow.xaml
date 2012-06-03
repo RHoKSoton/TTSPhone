@@ -1,7 +1,7 @@
 ﻿<Window x:Class="TTSPhone.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="387" Width="607">
+        Title="MainWindow" Height="387" Width="607" Loaded="Window_Loaded">
     <Grid>
         <Button Content="Dial Contact" Height="62" HorizontalAlignment="Left" Margin="325,274,0,0" Name="button1" VerticalAlignment="Top" Width="248" Click="button1_Click" />
     </Grid>

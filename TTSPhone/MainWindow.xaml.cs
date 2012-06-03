@@ -18,18 +18,23 @@ namespace TTSPhone
     public partial class MainWindow : Window
     {
         public static Thread listenThread;
+        public static Thread receiveThread;
         Network network;
         public MainWindow()
         {
             InitializeComponent();
-            network = new Network();
-            network.StartListening(3301);
         }
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
             network.TryConnect("localhost");
             network.Send(Encoding.ASCII.GetBytes("HELLO"));
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            network = new Network();
+            network.StartListening(3301);
         }
     }
 }

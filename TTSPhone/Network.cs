@@ -9,27 +9,10 @@ using System.Runtime.InteropServices;
 
 namespace TTSPhone
 {
-    [StructLayout(LayoutKind.Explicit)]
-    public struct PacketHeader
-    {
-        [FieldOffset(0)]
-        public byte byte1;
-
-        [FieldOffset(1)]
-        public byte byte2;
-
-        [FieldOffset(2)]
-        public byte byte3;
-
-        [FieldOffset(3)]
-        public byte byte4;
-
-        [FieldOffset(0)]
-        public int length;
-    }
     public class Network
     {
         TcpListener listener;
+        public Audio audio;
         TcpClient client;
         NetworkStream receiveStream;
         NetworkStream sendStream;
@@ -40,6 +23,7 @@ namespace TTSPhone
         {
             receivedByes = new byte[1048576];
             MainWindow.receiveThread = new System.Threading.Thread(this.Receive);
+            audio = new Audio();
         }
 
         public void StartListening(int port)
@@ -66,6 +50,9 @@ namespace TTSPhone
                         client = listener.AcceptTcpClient();
                         receiveStream = client.GetStream();
                         sendStream = client.GetStream();
+                        audio.StartWrite();
+                        audio.StartRecording();
+                        //audio.StartPlaying();
                         MainWindow.receiveThread.Start();
                     }
                 }
@@ -96,19 +83,12 @@ namespace TTSPhone
         
         public void Receive ()
         {
-            PacketHeader header = new PacketHeader();
             while (InCall)
             {
                 if (receiveStream.DataAvailable)
                 {
-                    header.byte1 = (byte)receiveStream.ReadByte();
-                    header.byte2 = (byte)receiveStream.ReadByte();
-                    header.byte3 = (byte)receiveStream.ReadByte();
-                    header.byte4 = (byte)receiveStream.ReadByte();
-                    for (int i = 4; i < header.length; i++)
-                    {
-                        receivedByes[i - 4] = (byte)receiveStream.ReadByte();
-                    }
+                    receiveStream.Read(receivedByes, 0, 4);
+                    receiveStream.Position = 0;
                 }
             }
         }

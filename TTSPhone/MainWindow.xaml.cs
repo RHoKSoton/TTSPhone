@@ -36,5 +36,14 @@ namespace TTSPhone
             network = new Network();
             network.StartListening(3301);
         }
+
+        private void button2_Click(object sender, RoutedEventArgs e)
+        {
+            byte[] returnData = network.audio.GetData();
+            for (int i = 0; i < 4; i++)
+            {
+                this.textBox1.Text += returnData[i].ToString();
+            }
+        }
     }
 }

@@ -17,6 +17,7 @@ namespace TTSPhone
         bool accessing = false;
         public int SampleRate = 8000;
         public int Channels = 1;
+        private Queue<byte> data = new Queue<byte>();
         private byte[] SampledData = new byte[1024];
 
         public Audio()
@@ -36,7 +37,7 @@ namespace TTSPhone
                 int currentLength = SampledData.Length -1;
                 for (int i = 0; i<floatBytes.Length;i++)
                 {
-                    SampledData[currentLength+i] = floatBytes[i];
+                    data.Enqueue(floatBytes[i]);
                 }
             }
         }
@@ -49,6 +50,7 @@ namespace TTSPhone
 
         public void StartPlaying()
         {
+            waveOut.Init(new WaveFileReader(ms));
             waveOut.Play();
         }
 
@@ -64,8 +66,11 @@ namespace TTSPhone
 
         public byte[] GetData()
         {
-            byte[] returnData = SampledData;
-            SampledData = new byte[1024];
+            byte[] returnData = new byte[4];
+            for (int i = 0; i < 4; i++)
+            {
+                returnData[i] = data.Dequeue();
+            }
             return returnData;
         }
     }
